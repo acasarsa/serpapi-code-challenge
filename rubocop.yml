@@ -1,0 +1,19 @@
+AllCops:
+  TargetRubyVersion: 3.0
+  Exclude:
+    - 'Gemfile'
+    - 'spec/spec_helper.rb'
+    - 'bin/*'
+
+Layout/LineLength:
+  Max: 150
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
