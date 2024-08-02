@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'nokogiri'
-require '../lib/main'
+require '../lib/google_carousel_extractor'
 
 RSpec.configure do |config|
   # Use the specified formatter
