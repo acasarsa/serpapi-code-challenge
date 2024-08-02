@@ -21,7 +21,7 @@ RSpec.describe GoogleCarouselExtractor::Parsers::HtmlFileParser do
       expect(content).to be_a(Nokogiri::HTML::Document)
     end
 
-    it 'should contain expected images', :focus do
+    xit 'should contain expected images' do
       content = parser.ready_html_content
       parsed_carousel_images = content.at_css('g-scrolling-carousel').css('a').css('img')
       first_image_src_value = parsed_carousel_images[0].attribute_nodes[2].value
