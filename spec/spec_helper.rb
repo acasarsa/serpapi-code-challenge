@@ -2,12 +2,12 @@
 
 require 'rspec'
 require 'nokogiri'
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
+$LOAD_PATH.unshift(File.expand_path('../lib/google_carousel_extractor', __dir__))
 require 'google_carousel_extractor'
 
-RSpec.configure do |config|
-  # Add the lib directory to the load path
-  $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
+RSpec.configure do |config|
   # Use the specified formatter
   config.formatter = :documentation
 

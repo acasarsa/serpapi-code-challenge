@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'watir'
-require_relative '../../lib/services/browser_service'
+require 'services/browser_service'
 
 RSpec.describe GoogleCarouselExtractor::Services::BrowserService do
   let(:url) { 'http://example.com' }

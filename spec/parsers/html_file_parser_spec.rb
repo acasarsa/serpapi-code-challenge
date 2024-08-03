@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'nokogiri'
 require 'pry'
 require 'json'
-require_relative '../../lib/parsers/html_file_parser'
+require 'parsers/html_file_parser'
 
 RSpec.describe GoogleCarouselExtractor::Parsers::HtmlFileParser do
   let(:file_path) { './spec/fixtures/van-gogh-paintings.html' }
@@ -21,38 +21,34 @@ RSpec.describe GoogleCarouselExtractor::Parsers::HtmlFileParser do
       expect(content).to be_a(Nokogiri::HTML::Document)
     end
 
-    it 'correctly parses and matches image sources' do
-      content = parser.ready_html_content
-      parsed_carousel_images = content.at_css('g-scrolling-carousel').css('a').css('img')
+    it 'parses HTML and includes expected data', :focus do
+      parsed_content = parser.ready_html_content
+      parsed_a_tags = parsed_content.at_css('g-scrolling-carousel').css('a')
+      parsed_carousel_images = parsed_a_tags.css('img')
 
-      5.times do
-        index_rand = rand(0...result_with_images['artworks'].length)
-
-        first_30_char_of_image_src = parsed_carousel_images[index_rand].attribute_nodes[2].value[0, 30]
-        first_30_char_of_expected = result_with_images['artworks'][index_rand]['image'][0, 30]
-
+      result_with_images['artworks'].each_with_index do |artwork, index|
+        binding.pry
+        first_30_char_of_image_src = parsed_carousel_images[index].attribute_nodes[2].value[0, 30]
+        first_30_char_of_expected = artwork['image'][0, 30]
         expect(first_30_char_of_image_src).to eq(first_30_char_of_expected)
-      end
-    end
 
-    it 'parsed HTML includes the expected data', :focus do
-      content = parser.ready_html_content
-      5.times do
-        index_rand = rand(0...result_with_images['artworks'].length)
-        expected_name = result_with_images['artworks'][index_rand]['name']
-        expected_date = result_with_images['artworks'][index_rand]['extensions'][0]
-        expected_link = result_with_images['artworks'][index_rand]['link']
+        # Check for extensions (e.g., date)
+        expected_title = result_with_images['artworks'][index]['name']
+        expected_link = result_with_images['artworks'][index]['link']
+        expected_date = artwork['extensions']&.first
 
-        carousel_a_tags = content.at_css('g-scrolling-carousel').css('a')
-
-        # Check if the title includes the expected name and date
-        expect(carousel_a_tags[index_rand]['title']).to include(expected_name)
-        expect(carousel_a_tags[index_rand]['title']).to include(expected_date)
-
-        # Check if the href includes the expected link
-        href = carousel_a_tags[index_rand]['href']
+        title_and_date = parsed_a_tags[index]['title']
+        href = parsed_a_tags[index]['href']
         full_link = "https://www.google.com#{href}"
+
+        expect(title_and_date).to include(expected_title)
         expect(full_link).to include(expected_link)
+
+        if expected_date.nil?
+          expect(title_and_date).not_to include('Unexpected Data')
+        else
+          expect(title_and_date).to include(expected_date)
+        end
       end
     end
   end
