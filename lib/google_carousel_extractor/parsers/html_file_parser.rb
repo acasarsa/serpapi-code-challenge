@@ -5,7 +5,7 @@ require_relative '../services/browser_service'
 
 module GoogleCarouselExtractor
   module Parsers
-    # parses an html file with nokogiri
+    # Parses an html file with nokogiri
     class HtmlFileParser
       def initialize(file_path, headless: true)
         @file_path = file_path

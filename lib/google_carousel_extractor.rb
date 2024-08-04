@@ -9,7 +9,7 @@ require 'parsers/html_file_parser'
 require 'services/browser_service'
 require 'carousel_extractor'
 
-# main project run file
+# Main project run file
 module GoogleCarouselExtractor
   def self.logger
     @logger ||= Logger.new($stdout)
