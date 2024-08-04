@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# # frozen_string_literal: true
 
 require 'nokogiri'
 require_relative '../services/browser_service'
@@ -12,12 +12,14 @@ module GoogleCarouselExtractor
         @headless = headless
       end
 
-      def ready_html_content
+      def parse_html
         GoogleCarouselExtractor::Services::BrowserService.with_browser_lifecycle(headless: @headless) do |service|
           file_url = "file://#{File.expand_path(@file_path)}"
           html_content = service.fetch_html_content(file_url)
           Nokogiri::HTML(html_content)
         end
+      rescue StandardError => e
+        raise "An error occurred: #{e.message}"
       end
     end
   end
