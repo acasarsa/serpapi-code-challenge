@@ -17,7 +17,7 @@ RSpec.describe GoogleCarouselExtractor::CarouselExtractor do
   end
   let(:expected_artworks_with_images) do
     file_content = File.read('./spec/fixtures/expected-array-with-images.json')
-    JSON.parse(file_content)['artworks'] # size 8
+    JSON.parse(file_content)['artworks']
   end
   let!(:extracted_artworks) { extractor.extract }
 
@@ -49,18 +49,27 @@ RSpec.describe GoogleCarouselExtractor::CarouselExtractor do
       end
     end
 
-    it 'extracts data from html as expected', :focus do
+    it 'properly extracts name and date when date is nil' do
+      sunflower_name = expected_artworks[2]['name']
+      ext_sunflower_name = extracted_artworks[2]['name']
+      sunflower_date = expected_artworks[2]['extensions']
+      ext_sunflower_date = extracted_artworks[2]['extensions']
+
+      expect(ext_sunflower_name).to eq(sunflower_name)
+      expect(ext_sunflower_date).to eq(sunflower_date)
+    end
+
+    it 'extracts data from html as expected' do
       expect(extracted_artworks.length).to eq expected_artworks.length
 
       expected_artworks.each_with_index do |artwork, index|
-        # name, ext: [date], link
         expected_name = artwork['name']
         expected_link = artwork['link']
-        expected_date = artwork['extensions'] # array
+        expected_date = artwork['extensions']
 
         extracted_name = extracted_artworks[index]['name']
         extracted_link = extracted_artworks[index]['link']
-        extracted_date = extracted_artworks[index]['extensions'] # array
+        extracted_date = extracted_artworks[index]['extensions']
 
         expect(extracted_name).to eq(expected_name)
         expect(extracted_link).to eq(expected_link)
@@ -70,9 +79,6 @@ RSpec.describe GoogleCarouselExtractor::CarouselExtractor do
   end
 end
 
-# TODO: add tests for the rest of the data for each artwork.
-# name, date, link
-# test that it handles there being no date.
+# TODO: test with other url
 # test it with a different url
-# test it has null value when expected
 # create the readme

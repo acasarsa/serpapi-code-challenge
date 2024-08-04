@@ -14,7 +14,8 @@ module GoogleCarouselExtractor
       a_tags.each do |a_tag|
         link = build_link(a_tag)
         image = extract_image_src(a_tag)
-        title, date = extract_title_and_date(a_tag)
+        title = extract_title(a_tag)
+        date = extract_date(a_tag)
         artworks << construct_artwork_object(name: title, date: date, link: link, image: image)
       end
       artworks
@@ -40,28 +41,30 @@ module GoogleCarouselExtractor
       "https://www.google.com#{href}"
     end
 
-    def extract_title_and_date(a_tag)
-      # TODO: the one that is missing a date is also showing empty for title. need to sort that out.
-      inner_text = a_tag.text.strip.gsub(/\s+/, ' ').split
-      date = extract_date(a_tag)
-      title = inner_text[0...-1].join(' ')
+    def extract_title(a_tag)
+      str = a_tag.attribute_nodes.find { |attr| attr.name == 'title' }&.value
+      remove_date_from_title(str)
+    end
 
-      [title, date]
+    def remove_date_from_title(string)
+      string&.gsub(/\s*\(\d{4}\)$/, '')
     end
 
     # TODO: use logger
     def extract_date(a_tag)
       date_element = a_tag.at_css('.ellip')
       if date_element
-        date_text = date_element.text.strip
-        return date_text if date_text.match?(/^\d+$/)
+        date_text = date_element.text&.strip
+        return date_text if valid_year?(date_text)
       end
 
       warn "Warning: Using fallback method to extract date. Check if 'ellip' class has changed or is missing."
-      # TODO: this may need adjusting - it seemed different when i was in spec
-      # Fallback: Extract the last word from the text content
-      fallback_date = a_tag.text.strip.gsub(/\s+/, ' ').split(' ')[-1]
-      fallback_date || 'Unknown Date' # Return 'Unknown Date' if no valid date is found
+      fallback_date_text = a_tag.text&.strip&.gsub(/\s+/, ' ')&.split(' ')&.last
+      valid_year?(date_text) ? fallback_date_text : nil
+    end
+
+    def valid_year?(string)
+      string&.match?(/^\d{4}$/)
     end
 
     def extract_image_src(a_tag)
