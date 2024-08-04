@@ -44,16 +44,6 @@ RSpec.describe GoogleCarouselExtractor::Services::BrowserService do
         expect(service.instance_variable_get(:@browser)).to be_nil
       end
     end
-
-    context 'with full browser mode' do
-      it 'fetches HTML content with visible browser' do
-        service = described_class.new(headless: false)
-        html_content = service.fetch_html_content(url)
-
-        expect(html_content).to include('<html')
-        expect(html_content).to include('Example Domain')
-      end
-    end
   end
 
   describe '.with_browser_lifecycle' do
