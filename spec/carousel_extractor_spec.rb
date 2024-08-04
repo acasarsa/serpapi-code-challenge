@@ -9,6 +9,7 @@ require 'pry'
 
 RSpec.describe GoogleCarouselExtractor::CarouselExtractor do
   let(:file_path) { './spec/fixtures/van-gogh-paintings.html' }
+  let(:file_path2) { './spec/fixtures/salvador-dali-paintings' }
   let(:parser) { GoogleCarouselExtractor::Parsers::HtmlFileParser.new(file_path) }
   let(:extractor) { GoogleCarouselExtractor::CarouselExtractor.new(parser) }
   let(:expected_artworks) do
