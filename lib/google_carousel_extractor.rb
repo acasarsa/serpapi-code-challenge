@@ -20,6 +20,21 @@ module GoogleCarouselExtractor
     end
   end
 
+  def self.run(parser, file_path)
+    extractor = GoogleCarouselExtractor::CarouselExtractor.new(parser, file_path)
+    artworks = extractor.extract
+
+    if artworks.empty?
+      logger.warn('No artworks were extracted. Please check the HTML file and parser.')
+    else
+      output_file = 'output_data.json'
+      File.open(output_file, 'w') do |file|
+        file.write(JSON.pretty_generate(artworks))
+      end
+      logger.info("Extracted artworks saved to #{output_file}")
+    end
+  end
+
   def self.demo
     # ImageHelpers for demo use to process base64 image strings.
     # Use: process_base64_image(base64_string)

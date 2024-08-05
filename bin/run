@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require_relative '../lib/google_carousel_extractor'
+
+sample_parser = GoogleCarouselExtractor::Parsers::HtmlFileParser.new
+sample_html_file = File.expand_path('../spec/fixtures/van-gogh-paintings.html', __dir__)
+GoogleCarouselExtractor.run(parser = sample_parser, file_path = sample_html_file)
