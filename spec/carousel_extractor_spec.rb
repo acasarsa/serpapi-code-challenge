@@ -4,6 +4,7 @@ require 'spec_helper'
 require 'json'
 require 'parsers/html_file_parser'
 require 'carousel_extractor'
+require 'google_carousel_extractor'
 
 RSpec.describe GoogleCarouselExtractor::CarouselExtractor do
   let(:parser) { double('Parser', parse_html: parsed_html) }
@@ -14,38 +15,45 @@ RSpec.describe GoogleCarouselExtractor::CarouselExtractor do
         <g-scrolling-carousel>
           <a href="/link1" title="Artwork 1 (1888)">
             <img src="https://example.com/image1.jpg" alt="Artwork 1" />
+            <div class="title">Artwork 1</div>
             <div class="ellip">1888</div>
           </a>
           <a href="/link2" title="Artwork 2">
             <img src="https://example.com/image2.jpg" alt="Artwork 2" />
+            <div class="title">Artwork 2</div>
           </a>
-          <a href="/link3" title="Artwork 3" data-src="placeholder_image.jpg">
+          <a href="/link3" title="Artwork 3">
+            <img src="placeholder_image.jpg" alt="Artwork 3" data-src="placeholder_image.jpg"/>
+            <div class="title">Artwork 3</div>
             <div class="ellip">1931</div>
           </a>
           <a href="/link4" title="Artwork 4 (1905)">
             <img src="https://example.com/image4.jpg" alt="Artwork 4" />
-          <div>1905</div> </a>
+            <div class="title">Artwork 4</div>
+            <div>1905</div>
+          </a>
+          <a href="/link5" title="Artwork 5 (1999)">
+            <img src="https://example.com/image5.jpg" alt="Artwork 5" />
+            <div class="title">Artwork 5</div>
+            <div class="not-ellip">1999</div>
+          </a>
           <a data-ti="ArtistToArtworks">...</a>
         </g-scrolling-carousel>
       HTML
     end
 
     it 'extracts artwork information correctly' do
-      extractor = described_class.new(parser, 'dummy_source')
+      extractor = described_class.new(parser, parse_html: parsed_html)
 
       expect(extractor.extract).to eq([
-                                        { 'name' => 'Artwork 1',
-                                          'link' => 'https://www.google.com/link1',
-                                          'image' => 'https://example.com/image1.jpg',
-                                          'extensions' => ['1888'] },
-                                        { 'name' => 'Artwork 2',
-                                          'link' => 'https://www.google.com/link2',
+                                        { 'name' => 'Artwork 1', 'link' => 'https://www.google.com/link1',
+                                          'image' => 'https://example.com/image1.jpg', 'extensions' => ['1888'] },
+                                        { 'name' => 'Artwork 2', 'link' => 'https://www.google.com/link2',
                                           'image' => 'https://example.com/image2.jpg' },
-                                        { 'name' => 'Artwork 3',
-                                          'link' => 'https://www.google.com/link3',
-                                          'image' => nil,
-                                          'extensions' => ['1931'] },
-                                        { 'name' => 'Artwork 4', 'link' => 'https://www.google.com/link4', 'image' => 'https://example.com/image4.jpg' }
+                                        { 'name' => 'Artwork 3', 'link' => 'https://www.google.com/link3', 'image' => nil, 'extensions' => ['1931'] },
+                                        { 'name' => 'Artwork 4', 'link' => 'https://www.google.com/link4',
+                                          'image' => 'https://example.com/image4.jpg', 'extensions' => ['1905'] },
+                                        { 'name' => 'Artwork 5', 'link' => 'https://www.google.com/link5', 'image' => 'https://example.com/image5.jpg', 'extensions' => ['1999'] }
                                       ])
     end
 
@@ -71,6 +79,27 @@ RSpec.describe GoogleCarouselExtractor::CarouselExtractor do
       it 'extracts the image src correctly' do
         allow(extractor).to receive(:extract_image_src).and_call_original
         expect(extractor.send(:extract_image_src, a_tag)).to eq('https://example.com/image1.jpg')
+      end
+      context 'when .ellip class is missing' do
+        let(:logger) { instance_double(Logger) }
+        let(:parser) { double('Parser', parse_html: parsed_html) }
+        let(:extractor) { described_class.new(parser, 'dummy_source') }
+
+        before do
+          allow(GoogleCarouselExtractor).to receive(:logger).and_return(logger)
+          allow(logger).to receive(:warn)
+        end
+
+        it 'logs a warning and uses fallback method' do
+          expect(logger).to receive(:warn).twice.with("Using fallback method to extract date. Check if 'ellip' class has changed or is missing.")
+          extracted_artworks = extractor.extract([3, 4])
+
+          date_from_no_class = extracted_artworks[0]['extensions'].first
+          date_from_different_class = extracted_artworks[1]['extensions'].first
+
+          expect(date_from_no_class).to eq('1905')
+          expect(date_from_different_class).to eq('1999')
+        end
       end
     end
   end

@@ -56,7 +56,6 @@ module GoogleCarouselExtractor
       string&.gsub(/\s*\(\d{4}\)$/, '')
     end
 
-    # TODO: use logger
     def extract_date(a_tag)
       date_element = a_tag.at_css('.ellip')
       if date_element
@@ -66,7 +65,7 @@ module GoogleCarouselExtractor
 
       GoogleCarouselExtractor.logger.warn("Using fallback method to extract date. Check if 'ellip' class has changed or is missing.")
       fallback_date_text = a_tag.text&.strip&.gsub(/\s+/, ' ')&.split(' ')&.last
-      valid_year?(date_text) ? fallback_date_text : nil
+      valid_year?(fallback_date_text) ? fallback_date_text : nil
     end
 
     def valid_year?(string)
