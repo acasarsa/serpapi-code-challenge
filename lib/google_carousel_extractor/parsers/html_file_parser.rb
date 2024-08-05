@@ -7,14 +7,13 @@ module GoogleCarouselExtractor
   module Parsers
     # Parses an html file with nokogiri
     class HtmlFileParser
-      def initialize(file_path, headless: true)
-        @file_path = file_path
+      def initialize(headless: true)
         @headless = headless
       end
 
-      def parse_html
+      def parse_html(file_path)
         GoogleCarouselExtractor::Services::BrowserService.with_browser_lifecycle(headless: @headless) do |service|
-          file_url = "file://#{File.expand_path(@file_path)}"
+          file_url = "file://#{File.expand_path(file_path)}"
           html_content = service.fetch_html_content(file_url)
           Nokogiri::HTML(html_content)
         end
