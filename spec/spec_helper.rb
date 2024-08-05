@@ -5,7 +5,6 @@ $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 $LOAD_PATH.unshift(File.expand_path('../lib/google_carousel_extractor', __dir__))
 
 require 'google_carousel_extractor'
-require_relative 'support/image_helpers'
 
 RSpec.configure do |config|
   # Use the specified formatter
@@ -33,4 +32,5 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.include ImageHelpers
+  config.include ArtworkComparisonHelpers
 end
