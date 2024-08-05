@@ -7,6 +7,7 @@ $LOAD_PATH.unshift(File.expand_path('../lib/google_carousel_extractor', __dir__)
 require 'google_carousel_extractor'
 
 RSpec.configure do |config|
+  ENV['ENVIRONMENT'] = 'test'
   # Use the specified formatter
   config.formatter = :documentation
 
@@ -33,4 +34,5 @@ RSpec.configure do |config|
 
   config.include ImageHelpers
   config.include ArtworkComparisonHelpers
+
 end

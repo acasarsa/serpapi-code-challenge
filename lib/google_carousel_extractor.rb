@@ -37,27 +37,30 @@ module GoogleCarouselExtractor
 
   def self.demo
     # ImageHelpers for demo use to process base64 image strings.
-    # Use: process_base64_image(base64_string)
-    #
     # Example: exp_image = process_base64_image(van_gogh_expected_array[0]['image'])
     #
     extend ImageHelpers
+
     # demo extraction from HTML file with van gogh paintings
     file_path = File.expand_path('../spec/fixtures/van-gogh-paintings.html', __dir__)
     van_gogh_expected_array = JSON.parse(File.read('spec/fixtures/expected-array.json'))['artworks']
     parser = GoogleCarouselExtractor::Parsers::HtmlFileParser.new
     extractor = GoogleCarouselExtractor::CarouselExtractor.new(parser, file_path)
-    Pry.start(binding)
+
+    Pry.start(binding) if defined?(Pry) && ENV['ENVIRONMENT'] != 'test'
+
     van_gogh_paintings = extractor.extract
-    pp van_gogh_paintings[0] # size 51
+    pp van_gogh_paintings[0] if defined?(Pry) && ENV['ENVIRONMENT'] != 'test'
 
     # demo extraction from HTML file with salvador dali paintings
     file_path2 = File.expand_path('../spec/fixtures/salvador-dali-paintings.html', __dir__)
     dali_expected_array = JSON.parse(File.read('spec/fixtures/expected-dali-array.json'))
     parser2 = GoogleCarouselExtractor::Parsers::HtmlFileParser.new
     extractor2 = GoogleCarouselExtractor::CarouselExtractor.new(parser2, file_path2)
-    Pry.start(binding)
+
+    Pry.start(binding) if defined?(Pry) && ENV['ENVIRONMENT'] != 'test'
+
     salvador_dali_paintings = extractor2.extract
-    pp salvador_dali_paintings[0] # size 11
+    pp salvador_dali_paintings[0] if defined?(Pry) && ENV['ENVIRONMENT'] != 'test'
   end
 end
