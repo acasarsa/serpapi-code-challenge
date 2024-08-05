@@ -4,6 +4,13 @@
 
 require_relative '../lib/google_carousel_extractor'
 
-sample_parser = GoogleCarouselExtractor::Parsers::HtmlFileParser.new
-sample_html_file = File.expand_path('../spec/fixtures/van-gogh-paintings.html', __dir__)
-GoogleCarouselExtractor.run(parser = sample_parser, file_path = sample_html_file)
+default_html_file = File.expand_path('../spec/fixtures/van-gogh-paintings.html', __dir__)
+
+# Get command-line argument for file path, if provided
+file_path = ARGV[0] ? File.expand_path(ARGV[0]) : default_html_file
+
+# Initialize the parser
+parser = GoogleCarouselExtractor::Parsers::HtmlFileParser.new
+
+# Run the extraction
+GoogleCarouselExtractor.run(parser, file_path)

@@ -6,7 +6,7 @@ gem 'nokogiri'
 gem 'rspec'
 gem 'watir'
 
-group :development do
+group :development, :test do
   gem 'pry'
   gem 'mini_magick'
   gem 'base64'
