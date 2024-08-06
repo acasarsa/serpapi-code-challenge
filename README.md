@@ -77,7 +77,7 @@ bin/run spec/fixtures/salvador-dali-paintings.html
 
 ### Demo / Playground
 
-This will bring you to a `pry` session with an initialized extractor and parser ready to go. There are two sessions so you can exit into the 2nd one to try it out with a different html file. There are included helpers that will allow you to compare the encoded image data as well. See `self.demo` [`google_carousel_extractor.rb`](./lib/google_carousel_extractor.rb).
+The `bin/demo` script provides a pre-configured Pry console with 2 extractors instantiated with different HTML files for user experimentation.
 
 ```bash
 bin/demo
@@ -91,38 +91,48 @@ To open a console with project-specific settings, use:
 bin/console
 ```
 
-## Project Components
+# Core Functionality 💪
 
-### Extractor
+### Parsing and Extraction Process
 
-The core logic for extracting artwork information from the HTML file is in the CarouselExtractor class. It processes the parsed data and extracts details like name, link, date, and image thumbnail into an array of hashes.
+The extraction process is the heart of the application, enabling users to extract specific details from HTML files containing a Google Scrolling Carousel.
 
-## Parser
+**Execution with `bin/run`:**
 
-The HtmlFileParser class uses Nokogiri and Watir to parse the HTML content of the file. It utilizes a headless browser to fetch and process the HTML.
+- The main script `bin/run` initiates the extraction process. It utilizes the `HtmlFileParser` class, which employs Watir's `BrowserService` for handling headless browser operations. This setup ensures that any JavaScript on the page is executed, allowing for accurate parsing.
+- The `HtmlFileParser` takes an HTML file path as input and uses Nokogiri to parse the HTML content, enhanced by Watir's browser service to manage JavaScript-rendered content.
 
-## Browser Service
+**Data Extraction:**
 
-The BrowserService class sets up a headless browser instance using Watir, which is used by the parser to fetch HTML content.
+- The `CarouselExtractor` class processes the parsed document to identify relevant elements within the Google Scrolling Carousel. It extracts key details such as the painting's name, the date of the painting that is put into an extensions array, the encoded thumbnail image, and the Google search link associated with each artwork.
+- Placeholder images and non-visible images are handled with specific logic: images marked for lazy loading (via `data-src`) or placeholders are returned as `nil` to avoid unnecessary data extraction or extra HTTP requests.
 
-## Bin Scripts
+**Output:**
 
-```bash
-bin/console: Opens a console for debugging and interaction.
-bin/run: Runs the extractor with a default or specified HTML file.
-bin/setup: Installs the necessary gems and sets up the environment.
-bin/demo: Enters a Pry console with pre-instantiated extractors for demo purposes.
+- The extracted information is compiled into a structured array of hashes. Each hash represents an artwork, containing attributes like 'name', 'link', 'extensions': [such as date], and 'image'.
+- This array is then exported to a JSON file for easy usage.
 
-```
-
-## Customization
+## Customization and Flexibility 🎨
 
 The project can be extended to handle different types of Google Scrolling Carousels by adding more robust fallback methods and handling different edge cases as needed.
 
-## Contributing
+- A fallback method is implemented for extracting dates when the expected class (.ellip) is missing or if the whole date div is missing.
+- I also added a logger.warn to log whenever the fallback was needed. I would extend this sort of behavior to a monitoring system to help track html changes that could break the app.
+
+- A similar approach could be employed to manage the "View all" link in some carousels by checking for `role='link'` or verifying the `.text` content.
+
+## Development Experience 💡
+
+The project presented a rich problem-solving experience, especially in handling edge cases like image data extraction. The Test-Driven Development (TDD) approach proved invaluable in ensuring robust and reliable extraction logic.
+
+## Next Steps 🪜
+
+Consider implementing further monitoring capabilities, such as logging warnings for potential issues or integrating with tools like Sentry for error tracking.
+
+## Contributing 🤝
 
 Feel free to submit issues or pull requests if you find any bugs or have suggestions for improvements.
 
-## License
+## License 📄
 
 This project is licensed under the MIT License.
