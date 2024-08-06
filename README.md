@@ -31,9 +31,12 @@ The gathered information is compiled into a JSON array and exported for convenie
 
 ### Clone the repository
 
+#### Cloning from forked branch
+
 ```bash
 git clone git@github.com:acasarsa/serpapi-code-challenge.git
 cd serpapi-code-challenge
+git checkout andrew-casarsa-code-challenge-solution-v1
 ```
 
 ### Set bin permissions
@@ -87,3 +90,39 @@ To open a console with project-specific settings, use:
 ```bash
 bin/console
 ```
+
+## Project Components
+
+### Extractor
+
+The core logic for extracting artwork information from the HTML file is in the CarouselExtractor class. It processes the parsed data and extracts details like name, link, date, and image thumbnail into an array of hashes.
+
+## Parser
+
+The HtmlFileParser class uses Nokogiri and Watir to parse the HTML content of the file. It utilizes a headless browser to fetch and process the HTML.
+
+## Browser Service
+
+The BrowserService class sets up a headless browser instance using Watir, which is used by the parser to fetch HTML content.
+
+## Bin Scripts
+
+```bash
+bin/console: Opens a console for debugging and interaction.
+bin/run: Runs the extractor with a default or specified HTML file.
+bin/setup: Installs the necessary gems and sets up the environment.
+bin/demo: Enters a Pry console with pre-instantiated extractors for demo purposes.
+
+```
+
+## Customization
+
+The project can be extended to handle different types of Google Scrolling Carousels by adding more robust fallback methods and handling different edge cases as needed.
+
+## Contributing
+
+Feel free to submit issues or pull requests if you find any bugs or have suggestions for improvements.
+
+## License
+
+This project is licensed under the MIT License.

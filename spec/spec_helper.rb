@@ -34,5 +34,4 @@ RSpec.configure do |config|
 
   config.include ImageHelpers
   config.include ArtworkComparisonHelpers
-
 end
